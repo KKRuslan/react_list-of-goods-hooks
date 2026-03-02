@@ -19,10 +19,11 @@ export const goodsFromServer = [
 enum SortType {
   SORT_FIELD_ALPHABETICALLY = 'alphabetically',
   SORT_FIELD_LENGTH = 'length',
+  NONE = 'none',
 }
 
 export const App: React.FC = () => {
-  const [sortField, setSortField] = useState<SortType | ''>('');
+  const [sortField, setSortField] = useState<SortType>(SortType.NONE);
   const [reversed, setReversed] = useState<boolean>(false);
 
   const handleAlphabetically = () => {
@@ -39,26 +40,24 @@ export const App: React.FC = () => {
 
   const handleReset = () => {
     setReversed(false);
-    setSortField('');
+    setSortField(SortType.NONE);
   };
 
   let visibleGoods = [...goodsFromServer];
 
   if (sortField === SortType.SORT_FIELD_ALPHABETICALLY) {
-    visibleGoods = [...visibleGoods].sort();
+    visibleGoods = visibleGoods.sort();
   }
 
   if (sortField === SortType.SORT_FIELD_LENGTH) {
-    visibleGoods = [...visibleGoods].sort((a, b) => a.length - b.length);
+    visibleGoods = visibleGoods.sort((a, b) => a.length - b.length);
   }
 
   if (reversed) {
-    visibleGoods = [...visibleGoods].reverse();
+    visibleGoods = visibleGoods.reverse();
   }
 
-  const isInitialOrder =
-    visibleGoods.length === goodsFromServer.length &&
-    visibleGoods.every((good, index) => good === goodsFromServer[index]);
+  const isInitialOrder = sortField === SortType.NONE && !reversed;
 
   return (
     <div className="section content">
